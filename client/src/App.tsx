@@ -2,7 +2,8 @@ import { useState, type FormEvent } from 'react'
 import './App.css'
 
 type DownloadResponse = {
-  message: string
+  message?: string
+  error?: string
   url?: string
 }
 
@@ -40,7 +41,7 @@ function App() {
       const data: DownloadResponse = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.message || 'The server could not process the request.')
+        throw new Error(data.error || data.message || 'The server could not process the request.')
       }
 
       setDownloadResponse(data)
@@ -94,7 +95,7 @@ function App() {
           )}
           {downloadResponse && (
             <div className="success-message">
-              <p>{downloadResponse.message}</p>
+              {downloadResponse.message && <p>{downloadResponse.message}</p>}
               {downloadResponse.url && <p>URL: {downloadResponse.url}</p>}
             </div>
           )}
