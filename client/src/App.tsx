@@ -1,17 +1,24 @@
-import { useState } from 'react'
+import { useState, type FormEvent } from 'react'
 import './App.css'
+
+type DownloadResponse = {
+  message: string
+  url?: string
+}
 
 function App() {
   const [url, setUrl] = useState('')
   const [statusMessage, setStatusMessage] = useState('Ready to receive a YouTube URL.')
   const [errorMessage, setErrorMessage] = useState('')
-  const [successMessage, setSuccessMessage] = useState('')
+  const [downloadResponse, setDownloadResponse] = useState<DownloadResponse | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
 
-  function handleDownloadClick() {
+  async function handleDownload(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
     const submittedUrl = url.trim()
 
     setErrorMessage('')
-    setSuccessMessage('')
+    setDownloadResponse(null)
 
     if (!submittedUrl) {
       setStatusMessage('Waiting for a YouTube URL.')
@@ -19,8 +26,33 @@ function App() {
       return
     }
 
-    setStatusMessage('URL received. Downloading is not available in this phase.')
-    setSuccessMessage(`React received this URL: ${submittedUrl}`)
+    setIsLoading(true)
+    setStatusMessage('Sending URL to the server...')
+
+    try {
+      const response = await fetch('http://localhost:5000/api/download', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ url: submittedUrl }),
+      })
+      const data: DownloadResponse = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.message || 'The server could not process the request.')
+      }
+
+      setDownloadResponse(data)
+      setStatusMessage('The server received your URL. Video downloading is not available yet.')
+    } catch (error) {
+      setStatusMessage('The request could not be completed.')
+      setErrorMessage(
+        error instanceof Error ? error.message : 'An unexpected error occurred.',
+      )
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -29,14 +61,14 @@ function App() {
         <p className="eyebrow">Simple, quick, and local</p>
         <h1 id="page-title">YouTube Video Downloader</h1>
         <p className="description">
-          Paste a YouTube video URL to get started. This interface is a preview;
-          downloading is not connected yet.
+          Paste a YouTube video URL to send it to the server. Video downloading
+          is not available yet.
         </p>
 
-        <label className="url-label" htmlFor="video-url">
-          YouTube URL
-        </label>
-        <div className="download-form">
+        <form className="download-form" onSubmit={handleDownload}>
+          <label className="url-label" htmlFor="video-url">
+            YouTube URL
+          </label>
           <input
             id="video-url"
             type="url"
@@ -45,12 +77,12 @@ function App() {
             placeholder="https://www.youtube.com/watch?v=..."
             autoComplete="url"
           />
-          <button type="button" onClick={handleDownloadClick}>
-            Download
+          <button type="submit" disabled={isLoading}>
+            {isLoading ? 'Sending...' : 'Download'}
           </button>
-        </div>
+        </form>
 
-        <div className="messages" aria-live="polite">
+        <div className="messages" aria-live="polite" aria-busy={isLoading}>
           <p className="status-message">
             <span className="message-label">Status</span>
             {statusMessage}
@@ -60,8 +92,11 @@ function App() {
               {errorMessage}
             </p>
           )}
-          {successMessage && (
-            <p className="success-message">{successMessage}</p>
+          {downloadResponse && (
+            <div className="success-message">
+              <p>{downloadResponse.message}</p>
+              {downloadResponse.url && <p>URL: {downloadResponse.url}</p>}
+            </div>
           )}
         </div>
       </section>
