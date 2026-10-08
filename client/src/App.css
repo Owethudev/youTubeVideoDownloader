@@ -1,0 +1,137 @@
+#root {
+  min-height: 100vh;
+}
+
+.page {
+  display: grid;
+  min-height: 100vh;
+  padding: 32px 20px;
+  place-items: center;
+}
+
+.downloader {
+  width: min(100%, 620px);
+  padding: clamp(28px, 6vw, 52px);
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  background: #ffffff;
+  box-shadow: 0 24px 70px rgb(15 23 42 / 9%);
+}
+
+.eyebrow {
+  margin: 0 0 12px;
+  color: #2563eb;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+h1 {
+  margin: 0;
+  color: #0f172a;
+  font-size: clamp(2rem, 6vw, 3rem);
+  letter-spacing: -0.045em;
+  line-height: 1.1;
+}
+
+.description {
+  margin: 16px 0 32px;
+  color: #64748b;
+  line-height: 1.65;
+}
+
+.url-label {
+  display: block;
+  margin-bottom: 9px;
+  color: #1e293b;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.download-form {
+  display: flex;
+  gap: 10px;
+}
+
+.download-form input {
+  min-width: 0;
+  flex: 1;
+  padding: 13px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 9px;
+  color: #0f172a;
+  font: inherit;
+  outline: none;
+}
+
+.download-form input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgb(37 99 235 / 15%);
+}
+
+.download-form input::placeholder {
+  color: #94a3b8;
+}
+
+.download-form button {
+  padding: 0 20px;
+  border: 0;
+  border-radius: 9px;
+  background: #2563eb;
+  color: #ffffff;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 600;
+  transition: background-color 150ms ease;
+}
+
+.download-form button:hover {
+  background: #1d4ed8;
+}
+
+.download-form button:focus-visible {
+  outline: 3px solid rgb(37 99 235 / 35%);
+  outline-offset: 3px;
+}
+
+.messages {
+  display: grid;
+  gap: 10px;
+  margin-top: 24px;
+  overflow-wrap: anywhere;
+}
+
+.messages p {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.status-message {
+  color: #475569;
+}
+
+.message-label {
+  margin-right: 8px;
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.error-message {
+  color: #b91c1c;
+}
+
+.success-message {
+  color: #15803d;
+}
+
+@media (max-width: 520px) {
+  .download-form {
+    flex-direction: column;
+  }
+
+  .download-form button {
+    min-height: 48px;
+  }
+}
